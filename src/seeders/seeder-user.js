@@ -22,7 +22,9 @@ module.exports = {
                 address: 'tphcm',
                 gender: 1,
                 roleId: 'R1',
-
+                phonenumber: '0123456',
+                positionId: 'prosessor',
+                image: 'kajfks',
                 createdAt: new Date(),
                 updatedAt: new Date(),
             },
