@@ -4,7 +4,7 @@ import db from '../models/index'
 const salt = bcrypt.genSaltSync(10)
 
 let createNewUser = async (data) => {
-    return new Promise(async (resole, reject) => {
+    return new Promise(async (resolve, reject) => {
         try {
             let hashPasswordFromByBcypt = await hashUserPassword(data.password)
             await db.User.create({
@@ -17,7 +17,7 @@ let createNewUser = async (data) => {
                 roleId: data.roleId,
                 phonenumber: data.phonenumber,
             })
-            resole('OK create a new user')
+            resolve('OK create a new user')
         } catch (e) {
             reject(e)
         }
@@ -25,10 +25,10 @@ let createNewUser = async (data) => {
 }
 
 let getAllUser = () => {
-    return new Promise(async (resole, reject) => {
+    return new Promise(async (resolve, reject) => {
         try {
             let users = db.User.findAll({ raw: true })
-            resole(users)
+            resolve(users)
         } catch (e) {
             reject(e)
         }
@@ -36,10 +36,10 @@ let getAllUser = () => {
 }
 
 let hashUserPassword = (password) => {
-    return new Promise(async (resole, reject) => {
+    return new Promise(async (resolve, reject) => {
         try {
             var hashPassword = await bcrypt.hashSync(password, salt)
-            resole(hashPassword)
+            resolve(hashPassword)
         } catch (e) {
             reject(e)
         }
@@ -47,13 +47,13 @@ let hashUserPassword = (password) => {
 }
 
 let getUserById = (id) => {
-    return new Promise(async (resole, reject) => {
+    return new Promise(async (resolve, reject) => {
         try {
             let user = await db.User.findOne({ where: { id: id }, raw: true })
             if (user) {
-                resole(user)
+                resolve(user)
             } else {
-                resole({})
+                resolve({})
             }
         } catch (e) {
             reject(e)
@@ -62,7 +62,7 @@ let getUserById = (id) => {
 }
 
 let updateUserData = (data) => {
-    return new Promise(async (resole, reject) => {
+    return new Promise(async (resolve, reject) => {
         try {
             await db.User.update(
                 {
@@ -72,11 +72,31 @@ let updateUserData = (data) => {
                 },
                 { where: { id: data.id } }
             )
-            resole()
+            resolve()
         } catch (e) {
             reject(e)
         }
     })
 }
 
-module.exports = { createNewUser, getAllUser, getUserById, updateUserData }
+let deleteUserById = (id) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            await db.User.destroy({
+                where: { id: id },
+            })
+
+            resolve()
+        } catch (e) {
+            reject(e)
+        }
+    })
+}
+
+module.exports = {
+    createNewUser,
+    getAllUser,
+    getUserById,
+    updateUserData,
+    deleteUserById,
+}
