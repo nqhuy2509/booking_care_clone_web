@@ -110,9 +110,10 @@ let createNewUser = (data) => {
 					lastName: data.lastName,
 					address: data.address,
 					gender: data.gender,
-					roleId: data.role,
-					positionId: data.position,
-					phonenumber: data.phoneNumber,
+					roleId: data.roleId,
+					positionId: data.positionId,
+					phonenumber: data.phonenumber,
+					image: data.avatar,
 				});
 
 				resolve({
@@ -163,16 +164,20 @@ let editUser = (data) => {
 			}
 			let user = await db.User.findOne({
 				where: { id },
+				raw: false,
 			});
 			if (user) {
-				await db.User.update(
-					{
-						firstName: data.firstName,
-						lastName: data.lastName,
-						address: data.address,
-					},
-					{ where: { id } }
-				);
+				user.firstName = data.firstName;
+				user.lastName = data.lastName;
+				user.address = data.address;
+				user.phonenumber = data.phonenumber;
+				user.gender = data.gender;
+				user.positionId = data.positionId;
+				user.roleId = data.roleId;
+				if (data.avatar) {
+					user.image = data.avatar;
+				}
+				await user.save();
 				resolve({
 					errCode: 0,
 					message: 'Update user successed !',
