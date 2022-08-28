@@ -164,10 +164,69 @@ let saveEditInfoDoctor = (data) => {
 	});
 };
 
+let getDetailDoctorById = (id) => {
+	return new Promise(async (resolve, reject) => {
+		try {
+			if (!id) {
+				resolve({
+					errCode: 1,
+					message: 'Missing required parameters!',
+				});
+			} else {
+				let data = await db.User.findOne({
+					where: { id: id },
+					attributes: {
+						exclude: ['password'],
+					},
+					include: [
+						{
+							model: db.Markdown,
+							attributes: [
+								'description',
+								'contentHTML',
+								'contentMarkdown',
+							],
+						},
+						{
+							model: db.Allcode,
+							as: 'positionData',
+							attributes: ['valueVi', 'valueEn'],
+						},
+					],
+					raw: true,
+					nest: true,
+				});
+				resolve({
+					errCode: 0,
+					message: 'OK',
+					data,
+				});
+			}
+		} catch (e) {
+			reject(e);
+		}
+	});
+};
+
+let bulkCreateSchedule = (data) => {
+	return new Promise(async (resolve, reject) => {
+		try {
+			console.log('data send', data);
+			resolve({
+				errCode: 0,
+			});
+		} catch (e) {
+			reject(e);
+		}
+	});
+};
+
 module.exports = {
 	getTopDoctorHome,
 	getAllDocTor,
 	postInfoDoctor,
 	getInfoDoctor,
 	saveEditInfoDoctor,
+	getDetailDoctorById,
+	bulkCreateSchedule,
 };
